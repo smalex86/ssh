@@ -1,0 +1,9 @@
+{
+    "repositories": [ { "type": "vcs", "url": "https://github.com/smalex86/logger" } ], 
+    "require": { "smalex86/logger": "1.7.6" },
+    "autoload": {
+        "psr-4": {
+            "smalex86\\ssh\\": "src"
+        }
+    }
+}
