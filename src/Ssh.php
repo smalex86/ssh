@@ -2,7 +2,7 @@
 
 namespace smalex86\ssh;
 
-use smalex86\ssh\{Connection, PublicKey, Shell};
+use smalex86\ssh\{Connection, PublicKey, Scp, Shell, Sftp};
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -29,6 +29,16 @@ class Ssh implements LoggerAwareInterface {
      * @var Connection
      */
     public $connection = null;
+    /**
+     * Scp, копирование файлов 
+     * @var Scp
+     */
+    public $scp = null;
+    /**
+     * Sftp соединение
+     * @var Sftp
+     */
+    public $sftp = null;
 
 
     /**
@@ -75,6 +85,32 @@ class Ssh implements LoggerAwareInterface {
         $this->shell = new Shell($this->logger, $this->connection, $maxExecTime, 
                 $termType, $shellSleep);
         return $this->shell;
+    }
+    
+    /**
+     * Открытие объекта для передачи файлов
+     * @return Scp
+     * @throws exception\BaseSshException
+     */
+    public function openScp() {
+        if (!$this->connection) {
+            throw new exception\BaseSshException('Не установлено соединение');
+        }
+        $this->scp = new Scp($this->logger, $this->connection);
+        return $this->scp;
+    }
+    
+    /**
+     * Открытие соединения sftp
+     * @return Sftp
+     * @throws exception\BaseSshException
+     */
+    public function openSftp() {
+        if (!$this->connection) {
+            throw new exception\BaseSshException('Не установлено соединение');
+        }
+        $this->sftp = new Sftp($this->logger, $this->connection);
+        return $this->sftp;
     }
     
 }
