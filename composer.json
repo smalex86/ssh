@@ -1,4 +1,17 @@
 {
+    "name": "smalex86/ssh",
+    "homepage": "https://github.com/smalex86/ssh",
+    "description": "SSH",
+    "keywords": [
+        "ssh"
+    ],
+    "license": "/LICENCE",
+    "authors": [
+        {
+            "name": "Alexandr Smirnov",
+            "email": "mail_er@mail.ru"
+        }
+    ],
     "repositories": [ { "type": "vcs", "url": "https://github.com/smalex86/logger" } ], 
     "require": { "smalex86/logger": "1.7.6" },
     "autoload": {
