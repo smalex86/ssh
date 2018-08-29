@@ -9,11 +9,11 @@ use smalex86\ssh\Connection;
  * Sftp
  *
  * Сделать:
- * 1. Получение файла с удаленной машины с выводом статуса
- * 2. Отправка данных в файл на удаленной машине
+ * 1. Отправка данных в файл на удаленной машине
  * 
  * Сделано:
- * 1. Отправка файла на удаленную машину с выводом статуса
+ * 1. Отправка файла на удаленную машину с выводом статуса (sendFile)
+ * 2. Получение файла с удаленной машины с выводом статуса (receiveFile)
  * 
  * @author smirnov
  */
@@ -121,6 +121,81 @@ class Sftp implements LoggerAwareInterface {
                     $writeData, $localFileSize, $e->getMessage(), 
                     $e->getLine());
         }
+    }
+    
+    /**
+     * Получение файла с удаленной машины
+     * @param string $remoteFile
+     * @param string $localFile
+     * @return int количество записанных байт
+     * @throws exception\SftpException
+     * @throws Exception
+     */
+    public function receiveFile($remoteFile, $localFile) {
+        $remoteFileInfo = stat('ssh2.sftp://' . intval($this->session) 
+                . $remoteFile);
+        if ($remoteFileInfo === false || !is_array($remoteFileInfo)) {
+            throw new exception\SftpException('Не удалось получить информацию '
+                    . 'об удаленном файле ' . $remoteFile);
+        } 
+        $remoteFileSize = $remoteFileInfo['size'];
+        $rcvData = 0;
+        $writeData = 0;
+        $this->logger->debug(sprintf('Получение файла %s с сервер в файл %s', 
+                $remoteFile, $localFile));
+        try {
+            $local = fopen($localFile, 'w');
+            $remote = fopen('ssh2.sftp://' . intval($this->session) //. '/.'
+                    . $remoteFile, 'r');
+            while (!feof($remote)) {
+                // получение данных
+                $rd = fread($remote, self::DATA_LENGTH);
+                if ($rd === false) {
+                    throw new Exception('ошибка при получении данных');
+                } elseif ($rd) {
+                    $rcvData += strlen($rd);
+                }
+                // запись данных
+                $wd = fwrite($local, $rd);
+                if ($wd === false) {
+                    throw new Exception('ошибка при записи данных');
+                } else if ($wd) {
+                    $writeData += $wd;
+                }
+                $this->logger->debug(sprintf('получено %u/%u байт и записано '
+                        . '%u/%u байт.', $rcvData, $remoteFileSize, $writeData, 
+                        $remoteFileSize));
+            }
+            fclose($remote);
+            fclose($local);
+            // успех
+            $this->logger->debug(sprintf('Удаленный файл %s был скопирован в '
+                    . 'файл %s, было получено %u/%u байт и записано %u/%u байт.', 
+                    $remoteFile, $localFile, $rcvData, $remoteFileSize, 
+                    $writeData, $remoteFileSize));
+            return $writeData;
+        } catch (\Exception $e) {
+            if (isset($local) && is_resource($local)) {
+                fclose($local);
+            }
+            if (isset($remote) && is_resource($remote)) {
+                fclose($remote);
+            }
+            throw new exception\SftpException('При получении данных из файла %s '
+                    . 'в файл %s возникла ошибка, было получено %s байт из %s.'
+                    . ' Ошибка: %s (line:%u)', $remoteFile, $localFile, 
+                    $rcvData, $remoteFileSize, $e->getMessage(), $e->getLine());
+        }
+    }
+    
+    /**
+     * Проверка существования удаленного файла
+     * @param string $remoteFile
+     * @return bool
+     */
+    public function RemoteFileExists($remoteFile) {
+        return file_exists('ssh2.sftp://' . intval($this->session) 
+                . $remoteFile);
     }
     
 }
