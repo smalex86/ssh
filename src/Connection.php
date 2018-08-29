@@ -79,6 +79,7 @@ class Connection implements LoggerAwareInterface {
      * Авторизация паролем
      * @param string $user
      * @param string $password
+     * @return Connection
      * @throws \smalex86\ssh\exception\AuthException
      */
     public function authPassword(string $user, string $password) {
@@ -90,6 +91,7 @@ class Connection implements LoggerAwareInterface {
             throw new \smalex86\ssh\exception\AuthException('Не удалось '
                     . 'авторизоваться');
         }
+        return $this;
     }
     
     /**
