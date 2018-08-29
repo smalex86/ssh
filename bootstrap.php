@@ -1,16 +1,31 @@
 <?php
 
-require_once dirname(__DIR__) . '/vendor/autoload.php'; 
+require_once __DIR__ . '/vendor/autoload.php'; 
 
-$config = include_once dirname(__DIR__) . "/config/config.php";
+/*
+ * Начало - Загрузка настроек 
+ */
+// определение пути для файлов конфигурации
+$configPath = __DIR__ . '/config/'; 
+// загрузка файлов конфигурации
+$config = [];
+$files = glob($configPath . '*.php');
+foreach ($files as $file) {
+  $config = array_merge($config, include $file);
+}
+// конфигурация
+$configObj = new ArrayObject($config, ArrayObject::ARRAY_AS_PROPS);
+/*
+ * Конец - Загрузка настроек
+ */
 
 use smalex86\logger\Logger;
 
 $logger = new Logger();
 $logger->routeList->attach(new smalex86\logger\route\FileRoute([
     'isEnabled' => true,
-    'maxLevel' => $config['logger']['level'],
+    'maxLevel' => $configObj->logger['level'],
     'logFile' => 'ssh.log',
-    'folder' => $config['logger']['folder'],
-    'dateFormat' => $config['logger']['dateFormat']
+    'folder' => $configObj->logger['folder'],
+    'dateFormat' => $configObj->logger['dateFormat']
 ]));
