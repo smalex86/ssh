@@ -96,9 +96,9 @@ class Sftp implements LoggerAwareInterface {
                 } else if ($wd) {
                     $writeData += $wd;
                 }
-                $this->logger->debug(sprintf('прочитано %u/%u байт и отправлено '
-                        . '%u/%u байт.', $readData, $localFileSize, $writeData, 
-                        $localFileSize));
+//                $this->logger->debug(sprintf('прочитано %u/%u байт и отправлено '
+//                        . '%u/%u байт.', $readData, $localFileSize, $writeData, 
+//                        $localFileSize));
             }
             fclose($remote);
             fclose($local);
@@ -162,9 +162,9 @@ class Sftp implements LoggerAwareInterface {
                 } else if ($wd) {
                     $writeData += $wd;
                 }
-                $this->logger->debug(sprintf('получено %u/%u байт и записано '
-                        . '%u/%u байт.', $rcvData, $remoteFileSize, $writeData, 
-                        $remoteFileSize));
+//                $this->logger->debug(sprintf('получено %u/%u байт и записано '
+//                        . '%u/%u байт.', $rcvData, $remoteFileSize, $writeData, 
+//                        $remoteFileSize));
             }
             fclose($remote);
             fclose($local);
