@@ -85,14 +85,14 @@ class Sftp implements LoggerAwareInterface {
                 // чтение данных
                 $rd = fread($local, self::DATA_LENGTH);
                 if ($rd === false) {
-                    throw new Exception('ошибка при чтении данных');
+                    throw new \Exception('ошибка при чтении данных');
                 } elseif ($rd) {
                     $readData += strlen($rd);
                 }
                 // отправка данных
                 $wd = fwrite($remote, $rd);
                 if ($wd === false) {
-                    throw new Exception('ошибка при отправке данных');
+                    throw new \Exception('ошибка при отправке данных');
                 } else if ($wd) {
                     $writeData += $wd;
                 }
@@ -151,14 +151,14 @@ class Sftp implements LoggerAwareInterface {
                 // получение данных
                 $rd = fread($remote, self::DATA_LENGTH);
                 if ($rd === false) {
-                    throw new Exception('ошибка при получении данных');
+                    throw new \Exception('ошибка при получении данных');
                 } elseif ($rd) {
                     $rcvData += strlen($rd);
                 }
                 // запись данных
                 $wd = fwrite($local, $rd);
                 if ($wd === false) {
-                    throw new Exception('ошибка при записи данных');
+                    throw new \Exception('ошибка при записи данных');
                 } else if ($wd) {
                     $writeData += $wd;
                 }
